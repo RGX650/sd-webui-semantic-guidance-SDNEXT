@@ -354,7 +354,8 @@ def sega_apply_field(field):
 def make_axis_options():
         xyz_grid = [x for x in scripts.scripts_data if x.script_class.__module__ == "xyz_grid.py"][0].module
         extra_axis_options = {
-                xyz_grid.AxisOption("[Semantic Guidance] Active", str, sega_apply_override('sega_active', boolean=True), choices=xyz_grid.boolean_choice(reverse=True)),
+                #xyz_grid.AxisOption("[Semantic Guidance] Active", str, sega_apply_override('sega_active', boolean=True), choices=xyz_grid.boolean_choice(reverse=True)),
+                xyz_grid.AxisOption("[Semantic Guidance] Active", str, sega_apply_field("sega_active")),
                 xyz_grid.AxisOption("[Semantic Guidance] Prompt", str, sega_apply_field("sega_prompt")),
                 xyz_grid.AxisOption("[Semantic Guidance] Negative Prompt", str, sega_apply_field("sega_neg_prompt")),
                 xyz_grid.AxisOption("[Semantic Guidance] Warmup Steps", int, sega_apply_field("sega_warmup")),
@@ -363,8 +364,14 @@ def make_axis_options():
                 xyz_grid.AxisOption("[Semantic Guidance] Momentum Scale", float, sega_apply_field("sega_momentum_scale")),
                 xyz_grid.AxisOption("[Semantic Guidance] Momentum Beta", float, sega_apply_field("sega_momentum_beta")),
         }
-        if not any("[Semantic Guidance]" in x.label for x in xyz_grid.axis_options):
-                xyz_grid.axis_options.extend(extra_axis_options)
+        #if not any("[Semantic Guidance]" in x.label for x in xyz_grid.axis_options):
+                #xyz_grid.axis_options.extend(extra_axis_options)
+              
+        existing_labels = [option.label for option in xyz_grid.axis_options]
+        for option in extra_axis_options:
+                if f"[Semantic Guidance] {option.label.split('] ')[1]}" not in existing_labels:
+                        xyz_grid.axis_options.append(option)
+
 
 def callback_before_ui():
         try:
